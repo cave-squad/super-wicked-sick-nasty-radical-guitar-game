@@ -17,7 +17,7 @@ Dependencies
 - pygame
 
 
-Running the Game
+Running the game
 ----------------
 
 Run the game by executing the command:
@@ -30,16 +30,20 @@ How to play
 -----------
 
 A crowd of people are trying to get up into your personal space! Luckily, they don't like terrible guitar playing. Using all six strings and twelve frets of your guitar, fend them off! 
-<br>
+<br><br>
 **Tip**: People get used to the same thing pretty fast
 
 Controls
 --------
 
-1 to =: E string  
-q to \: A string 
+1 to =: E string
+<br> 
+q to \\: A string 
+<br>
 a to Return: D string
+<br>
 Hold Shift: Move up 3 strings
+<br>
 Hit Shift after playing note: Let note fully play out without having to hold key
 Space: Play a muted guitar strum (no purpose)
 

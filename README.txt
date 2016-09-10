@@ -1,7 +1,7 @@
-Your Game Title
-===============
+Super Wicked Sick Nasty Radical Guitar Game
+===========================================
 
-Entry in PyWeek #12  <http://www.pyweek.org/12/>
+Entry in PyWeek #22  <http://www.pyweek.org/22/>
 URL: https://github.com/cave-squad/fun-guitar-game
 Team: CAVE SQUAD
 Members: Alex Zhang (pontoffel), Jason Zhou (JaySKZ), Umar Ahmed (wspuma)

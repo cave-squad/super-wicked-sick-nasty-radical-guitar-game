@@ -10,7 +10,7 @@ from fgg import game
 from fgg.general import *
 
 def main():
-    pygame.time.set_timer(DISPLAY_REFRESH, int(1000/fps))
+    pygame.time.set_timer(DISPLAY_REFRESH, int(1000/FPS))
     pygame.init()
 
     inst = ins.Instrument("guitar1", ["0e", "0a", "1d", "1g", "1b", "2e"], "e")

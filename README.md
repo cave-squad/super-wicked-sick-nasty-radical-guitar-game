@@ -5,9 +5,13 @@ first collaborative desperate struggle to learn python as quickly as possible st
 \#shootyourshot2016
 
 Entry in PyWeek #22  <http://www.pyweek.org/22/>
+<br>
 URL: https://github.com/cave-squad/fun-guitar-game
+<br>
 Team: CAVE SQUAD
+<br>
 Members: [Alex Zhang (pontoffel)](https://github.com/pontoffel/), [Jason Zhou (JaySKZ)](https://github.com/JaySKZ/) and [Umar Ahmed (wspuma)](https://github.com/UmarAhmed/)
+<br>
 License: see LICENSE.txt
 
 Dependencies
@@ -45,6 +49,7 @@ a to Return: D string
 Hold Shift: Move up 3 strings
 <br>
 Hit Shift after playing note: Let note fully play out without having to hold key
+<br>
 Space: Play a muted guitar strum (no purpose)
 
 

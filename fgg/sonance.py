@@ -20,8 +20,12 @@ min_roughn = 1
 max_rhythm = 0
 min_rhythm = 1
 
-MAX_CTR = 50
+MAX_CTR = 10
 ctr = 0 
+ctr_clock = pygame.time.Clock()
+ctr_tick = -1
+prev_ctr_tick = -1
+
 avg_roughn = 0
 last_roughn = 0
 last_avg_roughn = -1 
@@ -78,9 +82,9 @@ def calcRhythm(t, prev_t): # dead simple rhythm calculation written when tired
 
 def getSonance(): # no arguments no problem
     if last_avg_rhythm < avg_rhythm and last_avg_roughn > avg_roughn: # consonant (bad)
-        return 1
-    elif last_avg_rhythm > avg_rhythm and last_avg_roughn < avg_roughn: # dissonant (good) 
         return -1
+    elif last_avg_rhythm > avg_rhythm and last_avg_roughn < avg_roughn: # dissonant (good) 
+        return 5 
     else:
-       return 0
+       return 1
 

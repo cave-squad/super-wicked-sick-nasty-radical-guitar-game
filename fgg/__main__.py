@@ -13,19 +13,20 @@ from fgg import draw
 
 def main():
     pygame.time.set_timer(DISPLAY_REFRESH, int(1000/FPS))
-    pygame.time.set_timer(GAME_REFRESH, 100)
+    pygame.time.set_timer(GAME_REFRESH, 1000)
     pygame.init()
 
     inst = ins.Instrument("guitar1", ["0e", "0a", "1d", "1g", "1b", "2e"], "e")
     fadeouts = {}
     oct_offset = 0
 
+    dec = pygame.image.load(data.filepath("img/dec.png")).convert_alpha() # cute decoration
 
     fnt = pygame.font.SysFont("monospace", 16)
 
     muted_strum = pygame.mixer.Sound(data.filepath("sound/muted_strum.ogg"))
 
-    title_page = pygame.image.load(data.filepath("img/title_page.jpg"))
+    title_page = pygame.image.load(data.filepath("img/title_page.png"))
     screen.blit(title_page, (0, 0))
     pygame.display.flip()
     pygame.time.wait(500)
@@ -93,17 +94,28 @@ def main():
                     son.avg_rhythm = son.avg_rhythm / son.ctr
                     son.avg_roughn = son.avg_roughn / son.ctr
                     game.updateCombos(son.last_roughn, son.last_rhythm, son.tick)
-                    #if son.ctr >= son.MAX_CTR:
+                    if son.ctr >= son.MAX_CTR:
+                        son.ctr_tick = son.ctr_clock.tick()
+                        gson = son.getSonance()
+                        if son.ctr_tick < 1500:
+                            gson = abs(gson) * -1
+                            print("Punished!")
+                        game.updateCrowd(gson * (1 + (game.offbeat_chain / 10) * (1 + (game.offkey_chain) / 5) * (1 + (game.long_time_chain / 2)))) # where the magic happens
+                        son.ctr = 0
+                        son.last_avg_rhythm = son.avg_rhythm
+                        son.last_avg_roughn = son.avg_roughn
+                        game.roughnesses.clear()
             elif ev.type == GAME_OVER:
                 game.game_started = False
                 game.game_over = True
                 game.gameOver()
             elif ev.type == GAME_REFRESH:
-                print("called")
                 game.updateCrowd(game.crowd_x_inc)
             elif ev.type == DISPLAY_REFRESH:
                 game.updateCrowd()
                 game.updatePlayer()
+                if pygame.mixer.get_busy():
+                    draw.draw_imgs[dec] = (game.player_xy[0] + 40, game.player_xy[1] - 40)
                 screen.fill((255, 255, 255))
                 """rn = fnt.render("Roughness:", 1, (0, 0, 0))
                 screen.blit(img, img_rect)
@@ -120,6 +132,7 @@ def main():
                 pygame.display.flip()"""
                 draw.drawTxt(fnt)
                 draw.drawImg()
+
                 pygame.display.flip()
 
         pygame.time.wait(0)

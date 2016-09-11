@@ -13,14 +13,16 @@ from fgg import draw
 
 def main():
     pygame.time.set_timer(DISPLAY_REFRESH, int(1000/FPS))
-    pygame.time.set_timer(GAME_REFRESH, 1000)
+    pygame.time.set_timer(GAME_REFRESH, 100)
     pygame.init()
 
     inst = ins.Instrument("guitar1", ["0e", "0a", "1d", "1g", "1b", "2e"], "e")
     fadeouts = {}
     oct_offset = 0
 
+    bg = pygame.image.load(data.filepath("img/bg.png")).convert()
     dec = pygame.image.load(data.filepath("img/dec.png")).convert_alpha() # cute decoration
+    game_over_scrn = pygame.image.load(data.filepath("img/game_over.png")).convert()
 
     fnt = pygame.font.SysFont("monospace", 16)
 
@@ -29,7 +31,7 @@ def main():
     title_page = pygame.image.load(data.filepath("img/title_page.png"))
     screen.blit(title_page, (0, 0))
     pygame.display.flip()
-    pygame.time.wait(500)
+    pygame.time.wait(200)
 
     game.crowd = game.crowd.convert_alpha()
     for i in range(0, len(game.player)):
@@ -42,6 +44,10 @@ def main():
             if ev.type == pygame.KEYDOWN:
                 if game.game_started == False and game.game_over == False:
                     game.game_started = True
+                elif game.game_started == False and game.game_over == True:
+                    game.game_started = True
+                    game.game_over = False
+                    game.init()
                 if ev.key == pygame.K_ESCAPE:
                     sys.exit("\nThanks for playing!")
                 if ev.key == pygame.K_SPACE:
@@ -112,28 +118,16 @@ def main():
             elif ev.type == GAME_REFRESH:
                 game.updateCrowd(game.crowd_x_inc)
             elif ev.type == DISPLAY_REFRESH:
-                game.updateCrowd()
-                game.updatePlayer()
-                if pygame.mixer.get_busy():
-                    draw.draw_imgs[dec] = (game.player_xy[0] + 40, game.player_xy[1] - 40)
-                screen.fill((255, 255, 255))
-                """rn = fnt.render("Roughness:", 1, (0, 0, 0))
-                screen.blit(img, img_rect)
-                screen.blit(rn, (500, 275))
-                screen.blit(rn_min, (500, 300))
-                screen.blit(rn_max, (500, 325))
-                screen.blit(rn_last, (500, 350))
-                screen.blit(rn_avg, (500, 375))
-                screen.blit(rh, (500, 425))
-                screen.blit(rh_min, (500, 450))
-                screen.blit(rh_max, (500, 475))
-                screen.blit(rh_last, (500, 525))
-                screen.blit(rh_avg, (500, 550))
-                pygame.display.flip()"""
-                draw.drawTxt(fnt)
-                draw.drawImg()
-
+                if game.game_over == False and game.game_started:
+                    game.updateCrowd()
+                    game.updatePlayer()
+                    if pygame.mixer.get_busy():
+                        draw.draw_imgs[dec] = (game.player_xy[0] + 40, game.player_xy[1] - 40)
+                    screen.blit(bg, bg.get_rect())
+                    draw.drawTxt(fnt)
+                    draw.drawImg()
+                else:
+                    screen.blit(game_over_scrn, game_over_scrn.get_rect())
                 pygame.display.flip()
 
         pygame.time.wait(0)
-

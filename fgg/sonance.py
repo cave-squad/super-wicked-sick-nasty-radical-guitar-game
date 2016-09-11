@@ -36,6 +36,8 @@ last_avg_rhythm = -1
 # roughness calculation by ffting sounds so they are sinusoidal and incorrectly using vassilakis roughness model
 # for some reason unknown to me worse-sounding music generally makes the average roughness go down despite lower roughness meaning less
 def calcRoughness(snd, snd1):
+    mult = 1
+
     if roughness_cache.get((snd, snd1)) is not None:
         return roughness_cache[(snd, snd1)] 
     else:
@@ -51,6 +53,7 @@ def calcRoughness(snd, snd1):
         if int(ins.NOTES[snd][0]) < int(ins.NOTES[snd1][0]):
             f_max = ins.FREQS[int(ins.NOTES[snd1][0])][ins.OCTAVE.index(ins.NOTES[snd1][1:])]
             f_min = ins.FREQS[int(ins.NOTES[snd][0])][ins.OCTAVE.index(ins.NOTES[snd][1:])]
+            mult = 10
         elif int(ins.NOTES[snd][0]) == int(ins.NOTES[snd1][0]):
             if ins.OCTAVE.index(ins.NOTES[snd][1:]) < ins.OCTAVE.index(ins.NOTES[snd1][1:]):
                 f_max = ins.FREQS[int(ins.NOTES[snd1][0])][ins.OCTAVE.index(ins.NOTES[snd1][1:])]
@@ -64,11 +67,11 @@ def calcRoughness(snd, snd1):
         y = 2 * a_min / (a_min + a_max)
         s_fmax_fmin = (0.24 / (0.0207 * f_min + 18.96)) * (f_max - f_min) # separated for (somewhat) easier reading
         z = math.exp(-1 * 3.5 * s_fmax_fmin) - math.exp(-1 * 5.75 * s_fmax_fmin)
-        ans = pow(x, 0.1) * 0.5 * (pow(y, 3.11)) * z
+        ans = pow(x, 0.1) * 0.5 * (pow(y, 3.11)) * z * mult
         roughness_cache[(snd, snd1)] = ans
         roughness_cache[(snd1, snd)] = ans
 
-        return pow(x, 0.1) * 0.5 * (pow(y, 3.11)) * z
+        return pow(x, 0.1) * 0.5 * (pow(y, 3.11)) * z * mult
 
 def calcRhythm(t, prev_t): # dead simple rhythm calculation written when tired
     min_t = min(t, prev_t)

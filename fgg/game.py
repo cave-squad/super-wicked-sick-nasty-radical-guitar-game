@@ -36,15 +36,26 @@ crowd_x_inc = -10 # initially
 player = [ pygame.image.load(data.filepath("img/player/player.png")), 
         pygame.image.load(data.filepath("img/player/player_strum0.png")),
         pygame.image.load(data.filepath("img/player/player_strum1.png")),
-        pygame.image.load(data.filepath("img/player/player_strum2.png")),
-        pygame.image.load(data.filepath("img/player/player_strum3.png")) ]
+        pygame.image.load(data.filepath("img/player/player_strum2.png")) ]
 player_rect = player[0].get_rect()
 player_xy = (50, 500)
 player_frame = 0
 
+#class wave:
+#    types = [ pygame.image.load(data.filepath("img/wave/wave0.png")), 
+#            pygame.image.load(data.filepath("img/wave/wave1.png")), 
+#            pygame.image.load(data.filepath("img/wave/wave2.png")), 
+#            pygame.image.load(data.filepath("img/wave/wave3.png")) ] 
+#    def __init__(self, size):
+#wave_xy = (80, 500)
+#wave_active = 0
+#wave_frame = 0
+
 def init():
     global game_started
+    global game_over
     game_started = True
+    game_over = False
     draw.draw_imgs[crowd] = crowd_xy
 
 def updateCrowd(mov_x=0):
@@ -58,7 +69,7 @@ def updateCrowd(mov_x=0):
 
 def updatePlayer():
     global player_frame
-    if player_frame == 4:
+    if player_frame == len(player) - 1:
         player_frame = 0
     if player_frame > 0:
         player_frame += 0.5 # to slow anim
@@ -73,6 +84,7 @@ def gameOver():
     global offkey_errs
     global long_time_errs 
     global roughnesses 
+    global crowd_xy
 
     score = 0
     offbeat_chain = 0 
@@ -82,6 +94,7 @@ def gameOver():
     offkey_errs = 0
     long_time_errs = 0
     roughnesses.clear()
+    crowd_xy = (800, 400)
 
     son.tick = -1
     son.prev_tick = -1
@@ -93,7 +106,6 @@ def gameOver():
     son.avg_rhythm = 0
     son.last_rhythm = 0
     son.last_avg_rhythm = -1
-
 
 def updateCombos(rn, rh, mt):
     global score

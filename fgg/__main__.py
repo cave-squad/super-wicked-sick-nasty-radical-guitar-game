@@ -8,25 +8,39 @@ from fgg import instrument as ins
 from fgg import sonance as son
 from fgg import game
 from fgg.general import *
+from fgg import draw
+
 
 def main():
     pygame.time.set_timer(DISPLAY_REFRESH, int(1000/FPS))
+    pygame.time.set_timer(GAME_REFRESH, 100)
     pygame.init()
 
     inst = ins.Instrument("guitar1", ["0e", "0a", "1d", "1g", "1b", "2e"], "e")
     fadeouts = {}
     oct_offset = 0
 
-    screen = pygame.display.set_mode((800,800))
-    pygame.display.set_caption("Super Wicked Sick Nasty Radical Guitar Game")
 
     fnt = pygame.font.SysFont("monospace", 16)
 
     muted_strum = pygame.mixer.Sound(data.filepath("sound/muted_strum.ogg"))
 
-    while True: # official theme song: Also sprach Zarathustra, Op. 30
+    title_page = pygame.image.load(data.filepath("img/title_page.jpg"))
+    screen.blit(title_page, (0, 0))
+    pygame.display.flip()
+    pygame.time.wait(500)
+
+    game.crowd = game.crowd.convert_alpha()
+    for i in range(0, len(game.player)):
+        game.player[i].convert()
+
+    game.init() 
+
+    while True:  # official theme song: Also sprach Zarathustra, Op. 30
         for ev in pygame.event.get():
             if ev.type == pygame.KEYDOWN:
+                if game.game_started == False and game.game_over == False:
+                    game.game_started = True
                 if ev.key == pygame.K_ESCAPE:
                     sys.exit("\nThanks for playing!")
                 if ev.key == pygame.K_SPACE:
@@ -35,15 +49,15 @@ def main():
                 if ev.key == pygame.K_LSHIFT:
                     oct_offset = 3
                     fadeouts.clear()
-                if ev.key in kb_map[0]:
-                    playSound(inst.mapping[0 + oct_offset][kb_map[0].index(ev.key)])
-                    fadeouts[ev.key] = (0 + oct_offset, kb_map[0].index(ev.key))
-                if ev.key in kb_map[1]:
-                    playSound(inst.mapping[1 + oct_offset][kb_map[1].index(ev.key)])
-                    fadeouts[ev.key] = (1 + oct_offset, kb_map[1].index(ev.key))
-                if ev.key in kb_map[2]:
-                    playSound(inst.mapping[2 + oct_offset][kb_map[2].index(ev.key)])
-                    fadeouts[ev.key] = (2 + oct_offset, kb_map[2].index(ev.key))
+                if ev.key in KB_MAP[0]:
+                    playSound(inst.mapping[0 + oct_offset][KB_MAP[0].index(ev.key)])
+                    fadeouts[ev.key] = (0 + oct_offset, KB_MAP[0].index(ev.key))
+                if ev.key in KB_MAP[1]:
+                    playSound(inst.mapping[1 + oct_offset][KB_MAP[1].index(ev.key)])
+                    fadeouts[ev.key] = (1 + oct_offset, KB_MAP[1].index(ev.key))
+                if ev.key in KB_MAP[2]:
+                    playSound(inst.mapping[2 + oct_offset][KB_MAP[2].index(ev.key)])
+                    fadeouts[ev.key] = (2 + oct_offset, KB_MAP[2].index(ev.key))
             elif ev.type == pygame.KEYUP:
                 if ev.key == pygame.K_LSHIFT:
                     oct_offset = 0
@@ -52,20 +66,18 @@ def main():
             elif ev.type == SOUND_PLAYED:
                 son.prev_tick = son.tick
                 son.tick = son.snd_clock.tick()
-                game.measure_time += son.tick
                 if son.prev_tick != -1:
                     crh = son.calcRhythm(son.prev_tick, son.tick)
-                    #print("Max Rhythm: ", crh)
                     if crh > son.max_rhythm:
                         son.max_rhythm = crh
                     if crh < son.min_rhythm and crh != 0:
                         son.min_rhythm = crh
+                    if crh == 0:
+                        crh = 1
                     son.last_rhythm = crh
                     son.avg_rhythm = (son.avg_rhythm * son.ctr) + crh
-                    game.rhythms.append(crh)
                 if son.prev_snd is not None:
                     crn = son.calcRoughness(son.snd, son.prev_snd)
-                    #print("Roughness: ", crn)
                     if crn > son.max_roughn:
                         son.max_roughn = crn
                     if crn < son.min_roughn and crn != 0:
@@ -81,29 +93,33 @@ def main():
                     son.avg_rhythm = son.avg_rhythm / son.ctr
                     son.avg_roughn = son.avg_roughn / son.ctr
                     game.updateCombos(son.last_roughn, son.last_rhythm, son.tick)
+                    #if son.ctr >= son.MAX_CTR:
+            elif ev.type == GAME_OVER:
+                game.game_started = False
+                game.game_over = True
+                game.gameOver()
+            elif ev.type == GAME_REFRESH:
+                print("called")
+                game.updateCrowd(game.crowd_x_inc)
             elif ev.type == DISPLAY_REFRESH:
-                rn = fnt.render("Roughness:", 1, (0, 0, 0))
-                rn_min = fnt.render("Min: " + str(son.min_roughn), 1, (0, 0, 0))
-                rn_max = fnt.render("Max: " + str(son.max_roughn), 1, (0, 0, 0))
-                rn_last = fnt.render("Last: " + str(son.last_roughn), 1, (0, 0, 0))
-                rn_avg = fnt.render("Average: " + str(son.avg_roughn), 1, (0, 0, 0))
-                rh = fnt.render("Rhythm:", 1, (0, 0, 0))
-                rh_min = fnt.render("Min: " + str(son.min_rhythm), 1, (0, 0, 0))
-                rh_max = fnt.render("Max: " + str(son.max_rhythm), 1, (0, 0, 0))
-                rh_last = fnt.render("Last: " + str(son.last_rhythm), 1, (0, 0, 0))
-                rh_avg = fnt.render("Average: " + str(son.avg_rhythm), 1, (0, 0, 0))
+                game.updateCrowd()
+                game.updatePlayer()
                 screen.fill((255, 255, 255))
+                """rn = fnt.render("Roughness:", 1, (0, 0, 0))
                 screen.blit(img, img_rect)
-                screen.blit(rn, (600, 475))
-                screen.blit(rn_min, (600, 500))
-                screen.blit(rn_max, (600, 525))
-                screen.blit(rn_last, (600, 550))
-                screen.blit(rn_avg, (600, 575))
-                screen.blit(rh, (600, 600))
-                screen.blit(rh_min, (600, 625))
-                screen.blit(rh_max, (600, 650))
-                screen.blit(rh_last, (600, 675))
-                screen.blit(rh_avg, (600, 700))
+                screen.blit(rn, (500, 275))
+                screen.blit(rn_min, (500, 300))
+                screen.blit(rn_max, (500, 325))
+                screen.blit(rn_last, (500, 350))
+                screen.blit(rn_avg, (500, 375))
+                screen.blit(rh, (500, 425))
+                screen.blit(rh_min, (500, 450))
+                screen.blit(rh_max, (500, 475))
+                screen.blit(rh_last, (500, 525))
+                screen.blit(rh_avg, (500, 550))
+                pygame.display.flip()"""
+                draw.drawTxt(fnt)
+                draw.drawImg()
                 pygame.display.flip()
 
         pygame.time.wait(0)

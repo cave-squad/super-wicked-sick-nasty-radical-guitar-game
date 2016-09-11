@@ -19,14 +19,15 @@ max_roughn = 0
 min_roughn = 1
 max_rhythm = 0
 min_rhythm = 1
-ctr = 0 # for diagnostics
 
+MAX_CTR = 50
+ctr = 0 
 avg_roughn = 0
 last_roughn = 0
-init_roughn = -1 
+last_avg_roughn = -1 
 avg_rhythm = 0
 last_rhythm = 0
-init_rhythm = -1
+last_avg_rhythm = -1
 
 # roughness calculation by ffting sounds so they are sinusoidal and incorrectly using vassilakis roughness model
 # for some reason unknown to me worse-sounding music generally makes the average roughness go down despite lower roughness meaning less
@@ -40,16 +41,16 @@ def calcRoughness(snd, snd1):
         arr1 = pygame.sndarray.array(snd1)
         arr1 = numpy.fft.fft(arr1)
         arr1 = arr1 / numpy.sqrt(len(arr1))
-        f_max = ins.freqs[int(ins.NOTES[snd][0])][ins.octave.index(ins.NOTES[snd][1:])]
-        f_min = ins.freqs[int(ins.NOTES[snd1][0])][ins.octave.index(ins.NOTES[snd1][1:])]
+        f_max = ins.FREQS[int(ins.NOTES[snd][0])][ins.OCTAVE.index(ins.NOTES[snd][1:])]
+        f_min = ins.FREQS[int(ins.NOTES[snd1][0])][ins.OCTAVE.index(ins.NOTES[snd1][1:])]
 
         if int(ins.NOTES[snd][0]) < int(ins.NOTES[snd1][0]):
-            f_max = ins.freqs[int(ins.NOTES[snd1][0])][ins.octave.index(ins.NOTES[snd1][1:])]
-            f_min = ins.freqs[int(ins.NOTES[snd][0])][ins.octave.index(ins.NOTES[snd][1:])]
+            f_max = ins.FREQS[int(ins.NOTES[snd1][0])][ins.OCTAVE.index(ins.NOTES[snd1][1:])]
+            f_min = ins.FREQS[int(ins.NOTES[snd][0])][ins.OCTAVE.index(ins.NOTES[snd][1:])]
         elif int(ins.NOTES[snd][0]) == int(ins.NOTES[snd1][0]):
-            if ins.octave.index(ins.NOTES[snd][1:]) < ins.octave.index(ins.NOTES[snd1][1:]):
-                f_max = ins.freqs[int(ins.NOTES[snd1][0])][ins.octave.index(ins.NOTES[snd1][1:])]
-                f_min = ins.freqs[int(ins.NOTES[snd][0])][ins.octave.index(ins.NOTES[snd][1:])]
+            if ins.OCTAVE.index(ins.NOTES[snd][1:]) < ins.OCTAVE.index(ins.NOTES[snd1][1:]):
+                f_max = ins.FREQS[int(ins.NOTES[snd1][0])][ins.OCTAVE.index(ins.NOTES[snd1][1:])]
+                f_min = ins.FREQS[int(ins.NOTES[snd][0])][ins.OCTAVE.index(ins.NOTES[snd][1:])]
 
         arr_amp = numpy.mean((arr * arr.conj()).real)
         arr1_amp = numpy.mean((arr1 * arr1.conj()).real)
@@ -76,10 +77,10 @@ def calcRhythm(t, prev_t): # dead simple rhythm calculation written when tired
     return ret
 
 def getSonance(): # no arguments no problem
-    # weights: avg rhythm and roughness
-    # subtract 1 / weights when roughness * rhythm is below a certain threshold, otherwise add 1
-    if init_roughn == -1:
-        init_roughn = avg_roughn
-    if init_rhythm == -1: 
-        init_rhythm = avg_rhythm
-    
+    if last_avg_rhythm < avg_rhythm and last_avg_roughn > avg_roughn: # consonant (bad)
+        return 1
+    elif last_avg_rhythm > avg_rhythm and last_avg_roughn < avg_roughn: # dissonant (good) 
+        return -1
+    else:
+       return 0
+

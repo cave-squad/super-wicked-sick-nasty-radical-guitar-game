@@ -33,8 +33,7 @@ in the main folder (probably the one this README is in).
 How to play
 -----------
 
-A crowd of people are trying to get up into your personal space! Luckily, they don't like terrible guitar playing. Using all six strings and twelve frets of your guitar, fend them off! Bad music never sounded so good!
-<br><br>
+A crowd of people are trying to get up into your personal space! Luckily, they don't like terrible guitar playing. Using all six strings and twelve frets of your guitar, fend them off! <br><br>
 **Tip**: People get used to the same thing pretty fast, so be creative!
 
 Controls

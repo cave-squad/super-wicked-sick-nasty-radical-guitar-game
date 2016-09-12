@@ -53,7 +53,6 @@ def calcRoughness(snd, snd1):
         if int(ins.NOTES[snd][0]) < int(ins.NOTES[snd1][0]):
             f_max = ins.FREQS[int(ins.NOTES[snd1][0])][ins.OCTAVE.index(ins.NOTES[snd1][1:])]
             f_min = ins.FREQS[int(ins.NOTES[snd][0])][ins.OCTAVE.index(ins.NOTES[snd][1:])]
-            mult = 10
         elif int(ins.NOTES[snd][0]) == int(ins.NOTES[snd1][0]):
             if ins.OCTAVE.index(ins.NOTES[snd][1:]) < ins.OCTAVE.index(ins.NOTES[snd1][1:]):
                 f_max = ins.FREQS[int(ins.NOTES[snd1][0])][ins.OCTAVE.index(ins.NOTES[snd1][1:])]

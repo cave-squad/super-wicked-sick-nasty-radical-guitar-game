@@ -13,12 +13,17 @@ from fgg import draw
 
 def main():
     pygame.time.set_timer(DISPLAY_REFRESH, int(1000/FPS))
-    pygame.time.set_timer(GAME_REFRESH, 100)
+    INIT_GAME_REFRESH_TIME = 1000
+    game_refresh_time = INIT_GAME_REFRESH_TIME
+    pygame.time.set_timer(GAME_REFRESH, game_refresh_time)
     pygame.init()
 
     inst = ins.Instrument("guitar1", ["0e", "0a", "1d", "1g", "1b", "2e"], "e")
     fadeouts = {}
     oct_offset = 0
+
+    MAX_DIFF_CTR = 10
+    diff_ctr = 0
 
     bg = pygame.image.load(data.filepath("img/bg.png")).convert()
     dec = pygame.image.load(data.filepath("img/dec.png")).convert_alpha() # cute decoration
@@ -31,11 +36,11 @@ def main():
     title_page = pygame.image.load(data.filepath("img/title_page.png"))
     screen.blit(title_page, (0, 0))
     pygame.display.flip()
-    pygame.time.wait(200)
+    pygame.time.wait(2000)
 
     game.crowd = game.crowd.convert_alpha()
     for i in range(0, len(game.player)):
-        game.player[i].convert()
+        game.player[i].convert_alpha()
 
     game.init() 
 
@@ -101,6 +106,7 @@ def main():
                     son.avg_roughn = son.avg_roughn / son.ctr
                     game.updateCombos(son.last_roughn, son.last_rhythm, son.tick)
                     if son.ctr >= son.MAX_CTR:
+                        diff_ctr += 1
                         son.ctr_tick = son.ctr_clock.tick()
                         gson = son.getSonance()
                         if son.ctr_tick < 1500:
@@ -112,17 +118,27 @@ def main():
                         son.last_avg_roughn = son.avg_roughn
                         game.roughnesses.clear()
             elif ev.type == GAME_OVER:
+                diff_ctr = 0
+                game_refresh_time = INIT_GAME_REFRESH_TIME
+                screen.blit(game_over_scrn, game_over_scrn.get_rect())
+                pygame.display.flip()
+                pygame.time.wait(1000)
                 game.game_started = False
                 game.game_over = True
                 game.gameOver()
             elif ev.type == GAME_REFRESH:
                 game.updateCrowd(game.crowd_x_inc)
+                if (diff_ctr >= MAX_DIFF_CTR):
+                    game_refresh_time -= 50
+                    if game_refresh_time == 0:
+                        sys.exit("wow what a cheater")
+                    diff_ctr = 0
             elif ev.type == DISPLAY_REFRESH:
                 if game.game_over == False and game.game_started:
                     game.updateCrowd()
                     game.updatePlayer()
                     if pygame.mixer.get_busy():
-                        draw.draw_imgs[dec] = (game.player_xy[0] + 40, game.player_xy[1] - 40)
+                        draw.draw_imgs[dec] = (game.player_xy[0] + 20, game.player_xy[1] - 40)
                     screen.blit(bg, bg.get_rect())
                     draw.drawTxt(fnt)
                     draw.drawImg()

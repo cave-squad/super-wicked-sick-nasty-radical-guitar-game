@@ -18,15 +18,11 @@ def drawTxt(fnt):
     global draw_txts
     draw_txts = {
         fnt.render("Roughness:", 1, (0, 0, 0)):(ui_x, ui_y),
-        fnt.render("Min: " + str(son.min_roughn), 1, (0, 0, 0)):(ui_x, ui_y+25),
-        fnt.render("Max: " + str(son.max_roughn), 1, (0, 0, 0)):(ui_x, ui_y+50),
-        fnt.render("Last: " + str(son.last_roughn), 1, (0, 0, 0)):(ui_x, ui_y+75),
-        fnt.render("Average: " + str(son.avg_roughn), 1, (0, 0, 0)):(ui_x, ui_y+100),
-        fnt.render("Rhythm:", 1, (0, 0, 0)):(ui_x, ui_y+150),
-        fnt.render("Min: " + str(son.min_rhythm), 1, (0, 0, 0)):(ui_x, ui_y+175),
-        fnt.render("Max: " + str(son.max_rhythm), 1, (0, 0, 0)):(ui_x, ui_y+200),
-        fnt.render("Last: " + str(son.last_rhythm), 1, (0, 0, 0)):(ui_x, ui_y+225),
-        fnt.render("Average: " + str(son.avg_rhythm), 1, (0, 0, 0)):(ui_x, ui_y+250),
+        fnt.render("Last: " + str(son.last_roughn), 1, (0, 0, 0)):(ui_x, ui_y+25),
+        fnt.render("Average: " + str(son.avg_roughn), 1, (0, 0, 0)):(ui_x, ui_y+50),
+        fnt.render("Rhythm:", 1, (0, 0, 0)):(ui_x, ui_y+100),
+        fnt.render("Last: " + str(son.last_rhythm), 1, (0, 0, 0)):(ui_x, ui_y+125),
+        fnt.render("Average: " + str(son.avg_rhythm), 1, (0, 0, 0)):(ui_x, ui_y+150),
     }
     for txt in draw_txts:
         screen.blit(txt, draw_txts[txt])

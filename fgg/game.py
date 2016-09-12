@@ -38,7 +38,7 @@ player = [ pygame.image.load(data.filepath("img/player/player.png")),
         pygame.image.load(data.filepath("img/player/player_strum1.png")),
         pygame.image.load(data.filepath("img/player/player_strum2.png")) ]
 player_rect = player[0].get_rect()
-player_xy = (50, 500)
+player_xy = (20, 470)
 player_frame = 0
 
 #class wave:

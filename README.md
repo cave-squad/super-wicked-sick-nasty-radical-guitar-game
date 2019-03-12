@@ -10,7 +10,7 @@ URL: https://github.com/cave-squad/fun-guitar-game
 <br>
 Team: CAVE SQUAD
 <br>
-Members: [Alex Zhang (pontoffel)](https://github.com/pontoffel/), [Jason Zhou (JaySKZ)](https://github.com/JaySKZ/) and [Umar Ahmed (wspuma)](https://github.com/UmarAhmed/)
+Members: [Alex Zhang (azh)](https://github.com/azh/), [Jason Zhou (JaySKZ)](https://github.com/JaySKZ/) and [Umar Ahmed (UmarAhmed)](https://github.com/UmarAhmed/)
 <br>
 License: see LICENSE.txt
 
